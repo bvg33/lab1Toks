@@ -1,6 +1,8 @@
 package com.toks.laba1.event;
 
 import com.toks.laba1.initializer.SerialPortInitializer;
+import com.toks.laba1.packaging.Package;
+import com.toks.laba1.packaging.PackageService;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
@@ -30,9 +32,17 @@ public class SendButtonClickedEvent {
             String baudrate = speedButton.getValue();
             initializer.initSerialPort(port, baudrate);
             byte[] message = textField.getText().getBytes(StandardCharsets.UTF_8);
-            port.writeBytes(message);
+            Package packageData = createPackage(message);
+            port.writeBytes(packageData.getData());
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
+    }
+
+    private Package createPackage(byte[] message) {
+        String from = (port.getPortName().equals("COM1")) ? "1" : "2";
+        String to = (from.equals("1")) ? "2" : "1";
+        Package packageData = new Package(message, from, to);
+        return new PackageService().byteStaff(packageData);
     }
 }
