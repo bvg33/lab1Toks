@@ -1,5 +1,6 @@
 package com.toks.laba1.event;
 
+import com.toks.laba1.codding.HammingCoder;
 import com.toks.laba1.packaging.Package;
 import com.toks.laba1.packaging.PackageService;
 import javafx.scene.control.TextArea;
@@ -37,11 +38,12 @@ public class SerialPortReader implements SerialPortEventListener {
         String stringToReturn;
         PackageService service = new PackageService();
         receivedPackage = service.byteDestaff(receivedPackage);
+        HammingCoder coder = new HammingCoder();
+        byte[] decodingMessage = coder.decode(receivedPackage.getMessage());
         if(!receivedPackage.isFCSValid()){
             stringToReturn = "Data was corrupted";
         } else {
-            byte[] messageBytes = receivedPackage.getMessage();
-            stringToReturn = new String(messageBytes, StandardCharsets.UTF_8);
+            stringToReturn = new String(decodingMessage, StandardCharsets.UTF_8);
         }
         return stringToReturn;
     }

@@ -1,5 +1,6 @@
 package com.toks.laba1.event;
 
+import com.toks.laba1.codding.HammingCoder;
 import com.toks.laba1.initializer.SerialPortInitializer;
 import com.toks.laba1.packaging.Package;
 import com.toks.laba1.packaging.PackageService;
@@ -42,7 +43,10 @@ public class SendButtonClickedEvent {
     private Package createPackage(byte[] message) {
         String from = (port.getPortName().equals("COM1")) ? "1" : "2";
         String to = (from.equals("1")) ? "2" : "1";
-        Package packageData = new Package(message, from, to);
+        HammingCoder coder = new HammingCoder();
+        byte[] codeMessage= coder.code(message);
+        codeMessage[10] = '1';
+        Package packageData = new Package(codeMessage, from, to);
         return new PackageService().byteStaff(packageData);
     }
 }
